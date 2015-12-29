@@ -7,10 +7,10 @@
   "keywords": "hubot, hubot-scripts, foursquare, lunch",
   "repository": {
     "type": "git",
-    "url": "git://github.com/hubot-scripts/hubot-foursquare-lunch.git"
+    "url": "git://github.com/stephenyeargin/hubot-foursquare-lunch.git"
   },
   "bugs": {
-    "url": "https://github.com/hubot-scripts/hubot-foursquare-lunch/issues"
+    "url": "https://github.com/stephenyeargin/hubot-foursquare-lunch/issues"
   },
   "dependencies": {
     "node-foursquare": "^0.3.0"
