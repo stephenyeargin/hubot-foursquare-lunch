@@ -1,7 +1,7 @@
 {
   "name": "hubot-foursquare-lunch",
   "description": "Use Foursquare API to pick a lunch spot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Stephen Yeargin <stephen@yearg.in>",
   "license": "MIT",
   "keywords": "hubot, hubot-scripts, foursquare, lunch",
