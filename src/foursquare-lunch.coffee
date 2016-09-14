@@ -39,5 +39,5 @@ module.exports = (robot) ->
     foursquare.Venues.explore process.env.HUBOT_DEFAULT_LATITUDE, process.env.HUBOT_DEFAULT_LONGITUDE, false, params, config.secrets.accessToken, (error, response) ->
       if error
         return msg.send error
-      spot = msg.random response['groups'][0]['items']
+      spot = msg.random response['groups'][0]['items'].filter (item) -> item.venue
       msg.send spot.venue.name
