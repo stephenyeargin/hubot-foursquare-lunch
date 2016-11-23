@@ -72,6 +72,6 @@ module.exports = (robot) ->
         return msg.send error
       spot = msg.random response['groups'][0]['items']
       if msg.robot.adapterName == "slack"
-        msg.send "<https://foursqure.com/v/#{spot.venue.id}|#{spot.venue.name}>"
+        msg.send "<https://foursquare.com/v/#{spot.venue.id}|#{spot.venue.name}>"
       else
-        msg.send "#{spot.venue.name} https://foursqure.com/v/#{spot.venue.id}"
+        msg.send "#{spot.venue.name} https://foursquare.com/v/#{spot.venue.id}"
