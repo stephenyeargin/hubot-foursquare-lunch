@@ -15,7 +15,7 @@
 #   stephenyeargin
 
 util = require 'util'
-
+addv = require 'address-validator'
 
 module.exports = (robot) ->
   config = secrets:
@@ -25,26 +25,40 @@ module.exports = (robot) ->
     redirectUrl: "localhost"
   config.version = '20150722'
 
-  foursquare = require('node-foursquare')(config);
+  foursquare = require('node-foursquare')(config)
 
   robot.respond /lunch/i, (msg) ->
+    
     if _match = msg.message.text.match('([0-9\.]+) mile')
       meters = parseInt(_match[1] * 1609.344)
+    if _match = msg.message.text.match('([0-9\.]+) meter')
+      meters = parseInt _match[1]
     if _match = msg.message.text.match('near (.*)')
       near = _match[1]
-    suggestLunchSpot msg, meters, near
-
-  suggestLunchSpot = (msg, meters, near) ->
-
-    if near
-      lat  = false
-      long = false
+      addv.validate near, addv.match.unknown, (err, exact, inexact) ->
+        if err == null
+          if exact[0]?
+            console.log 'set exact'
+            lat = exact[0].location.lat
+            lon = exact[0].location.lon
+          else if inexact[0]?
+            console.log 'set inexact'
+            lat = inexact[0].location.lat
+            lon = inexact[0].location.lon
+          else
+            lat = null
+            lon = null
+        if lat > 0 && lon > 0
+          near = null
+        suggestLunchSpot msg, meters, near, lat, lon
     else
-      near = false
+      suggestLunchSpot msg, meters
+
+  suggestLunchSpot = (msg, meters, near, lat, long) ->
+
+    if !near && !lat && !long
       lat  = process.env.HUBOT_DEFAULT_LATITUDE
       long = process.env.HUBOT_DEFAULT_LONGITUDE
-
-    # console.log "lat #{lat} long #{long} near #{near}"
 
     params =
       price: '1,2,3',
@@ -54,15 +68,8 @@ module.exports = (robot) ->
       radius: meters||1600
       query: 'lunch'
 
-    # console.log params
-    # Call Foursquare API
     foursquare.Venues.explore lat, long, near, params, config.secrets.accessToken, (error, response) ->
       if error
         return msg.send error
-      # console.log util.inspect response.groups[0].items
-      # console.log util.inspect response
-      # console.log util.inspect response.suggestedFilters.filters
-      # for itm in response['groups'][0]['items']
-      #  console.log itm.venue.name
       spot = msg.random response['groups'][0]['items']
-      msg.send spot.venue.name
+      msg.send "< https://foursqure.com/v/#{spot.venue.id} | #{spot.venue.name} >"
