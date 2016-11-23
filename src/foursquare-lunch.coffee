@@ -17,7 +17,7 @@
 
 # TODO: error if FOURSQUARE variables not set.
 # TODO: error if default lat/long not set and are needed
-#
+
 addv = require 'address-validator'
 
 module.exports = (robot) ->
@@ -28,10 +28,17 @@ module.exports = (robot) ->
     redirectUrl: "localhost"
   config.version = '20150722'
 
+  locates = () -> robot.brain.data.lunch_locates ?= {}
+
+  # locates()[key]
+  # locates()[key]
+  # locates()[key] = value
+
   foursquare = require('node-foursquare')(config)
 
   robot.respond /lunch/i, (msg) ->
-    
+    from_user = msg.message.user.name
+
     if _match = msg.message.text.match('([0-9\.]+) mile')
       meters = parseInt(_match[1] * 1609.344)
     if _match = msg.message.text.match('([0-9\.]+) meter')
@@ -49,11 +56,20 @@ module.exports = (robot) ->
           else
             lat = null
             lon = null
-        if lat > 0 && lon > 0
+        if lat? && lon?
+          if !(locates()[from_user] && (locates()[from_user].lat == lat && locates()[from_user].lon == lon))
+            msg.reply "remembering #{lat},#{lon} for your future searches"
+            locates()[from_user] = {lat:lat,lon:lon}
           near = null
         suggestLunchSpot msg, meters, near, lat, lon
     else
-      suggestLunchSpot msg, meters
+      if locates()[from_user]
+        lat = locates()[from_user].lat
+        lon = locates()[from_user].lon
+        msg.reply "using saved lat/long: #{lat},#{lon}"
+        suggestLunchSpot msg, meters, null, lat, lon
+      else
+        suggestLunchSpot msg, meters
 
   suggestLunchSpot = (msg, meters, near, lat, long) ->
     if !near && !lat && !long
