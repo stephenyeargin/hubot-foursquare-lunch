@@ -14,6 +14,10 @@
 # Author:
 #   stephenyeargin
 
+
+# TODO: error if FOURSQUARE variables not set.
+# TODO: error if default lat/long not set and are needed
+#
 addv = require 'address-validator'
 
 module.exports = (robot) ->
@@ -37,11 +41,9 @@ module.exports = (robot) ->
       addv.validate near, addv.match.unknown, (err, exact, inexact) ->
         if err == null
           if exact[0]?
-            console.log 'set exact'
             lat = exact[0].location.lat
             lon = exact[0].location.lon
           else if inexact[0]?
-            console.log 'set inexact'
             lat = inexact[0].location.lat
             lon = inexact[0].location.lon
           else
@@ -54,7 +56,6 @@ module.exports = (robot) ->
       suggestLunchSpot msg, meters
 
   suggestLunchSpot = (msg, meters, near, lat, long) ->
-
     if !near && !lat && !long
       lat  = process.env.HUBOT_DEFAULT_LATITUDE
       long = process.env.HUBOT_DEFAULT_LONGITUDE
@@ -64,13 +65,21 @@ module.exports = (robot) ->
       openNow: true,
       limit: 50
       sortByDistance: true
-      radius: meters||1600
       query: 'lunch'
+
+    if meters
+      params.radius = meters
 
     foursquare.Venues.explore lat, long, near, params, config.secrets.accessToken, (error, response) ->
       if error
         return msg.send error
-      spot = msg.random response['groups'][0]['items']
+
+      if response['groups'][0]['items'].length > 0
+        spot = msg.random response['groups'][0]['items']
+      else
+        msg.send "no restaurants found"
+        return
+
       if msg.robot.adapterName == "slack"
         msg.send "<https://foursquare.com/v/#{spot.venue.id}|#{spot.venue.name}>"
       else
