@@ -19,7 +19,6 @@ describe 'hubot-untappd-friends for slack', ->
     process.env.HUBOT_LOG_LEVEL='error'
     process.env.FOURSQUARE_CLIENT_ID='foobar1'
     process.env.FOURSQUARE_CLIENT_SECRET='foobar2'
-    process.env.FOURSQUARE_ACCESS_TOKEN='foobar3'
     process.env.HUBOT_DEFAULT_LATITUDE=36.1514179
     process.env.HUBOT_DEFAULT_LONGITUDE=-86.8262359
     Date.now = mockDateNow
@@ -30,7 +29,6 @@ describe 'hubot-untappd-friends for slack', ->
     delete process.env.HUBOT_LOG_LEVEL
     delete process.env.FOURSQUARE_CLIENT_ID
     delete process.env.FOURSQUARE_CLIENT_SECRET
-    delete process.env.FOURSQUARE_ACCESS_TOKEN
     delete process.env.HUBOT_DEFAULT_LATITUDE
     delete process.env.HUBOT_DEFAULT_LONGITUDE
     Date.now = originalDateNow
@@ -43,12 +41,12 @@ describe 'hubot-untappd-friends for slack', ->
       .get('/v2/venues/explore')
       .query(
         price: '1,2,3',
-        openNow: true
-        sortByDistance: true,
-        query: 'lunch'
+        openNow: true,
+        query: 'lunch',
         radius: 1600,
         ll: '36.1514179,-86.8262359',
-        oauth_token: 'foobar3',
+        client_id: 'foobar1',
+        client_secret: 'foobar2',
         v: '20140806'
       )
       .replyWithFile(200, __dirname + '/fixtures/venues-explore-single.json')
@@ -65,18 +63,34 @@ describe 'hubot-untappd-friends for slack', ->
               "attachments": [
                 {
                   "color": "good",
-                  "fallback": "AVO Nashville (3001 Charlotte Ave Ste 200)",
+                  "fallback": "AVO Nashville (3001 Charlotte Ave Ste 200) - http://www.eatavo.com",
                   "title": "AVO Nashville",
                   "title_link": "https://foursquare.com/v/5592de25498e1053218edf29",
+                  "thumb_url": "https://ss3.4sqi.net/img/categories_v2/food/vegetarian_bg_120.png",
                   "fields": [
                     {
                       "title": "Address",
                       "value": "3001 Charlotte Ave Ste 200",
-                      "short": false
+                      "short": true
+                    },
+                    {
+                      "title": "Menu",
+                      "value": "<http://www.eatavo.com/menu/|View Menu>",
+                      "short": true
+                    },
+                    {
+                      "title": "Website",
+                      "value": "http://www.eatavo.com",
+                      "short": true
                     },
                     {
                       "title": "Rating",
-                      "value": "8",
+                      "value": "8 out of 10",
+                      "short": true
+                    },
+                    {
+                      "title": "Category",
+                      "value": "Vegetarian / Vegan",
                       "short": true
                     },
                     {
@@ -86,7 +100,8 @@ describe 'hubot-untappd-friends for slack', ->
                     }
                   ]
                 }
-              ]
+              ],
+              "unfurl_links": false
             }
           ]
         ]
@@ -102,12 +117,12 @@ describe 'hubot-untappd-friends for slack', ->
       .get('/v2/venues/explore')
       .query(
         price: '1,2,3',
-        openNow: true
-        sortByDistance: true,
-        query: 'lunch'
+        openNow: true,
+        query: 'lunch',
         radius: 1600,
         ll: '36.1514179,-86.8262359',
-        oauth_token: 'foobar3',
+        client_id: 'foobar1',
+        client_secret: 'foobar2',
         v: '20140806'
       )
       .replyWithFile(200, __dirname + '/fixtures/venues-explore-full.json')
