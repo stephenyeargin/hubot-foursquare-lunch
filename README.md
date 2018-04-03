@@ -4,25 +4,22 @@
 
 Use Foursquare API to pick a lunch spot.
 
-## How to Set Up the Bot User
+## Configuration
 
-1. Register a Foursquare application to obtain your `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`
-2. Authenticate either your personal foursquare account or a purpose-specific user that acts as your bot
-3. Manually walk through the OAuth process to obtain a `FOURSQUARE_ACCESS_TOKEN` (this can be tricky)
+1. [Register a Foursquare application](https://apps.foursquare.com) to obtain your `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`.
+2. Find your `HUBOT_DEFAULT_LATITUDE` and `HUBOT_DEFAULT_LONGITUDE` values using [Google Maps](https://maps.google.com) or another tool.
 
-When you have all three values, load them as environment variables for launching your Hubot. If you are installing via Heroku, you would enter:
+| Configuration Variable     | Required | Description                |
+| -------------------------- | :------: | -------------------------- |
+| `HUBOT_DEFAULT_LATITUDE`   | **Yes**  | Latitude in decimal format, e.g. `36.1514179` |
+| `HUBOT_DEFAULT_LONGITUDE`  | **Yes**  | Longitude in decimal format, e.g. `-86.8262359` |
+| `FOURSQUARE_CLIENT_ID`     | **Yes**  | The Client ID for your application |
+| `FOURSQUARE_CLIENT_SECRET` | **Yes**  | The Client Secret for your application |
+| `FOURSQUARE_PRICE_LEVELS`  | No       | Comma-separated price levels, 1-4 (default: `1,2,3`) |
+| `FOURSQUARE_SEARCH_QUERY`  | No       | The search query to use (default: `lunch`) |
+| `FOURSQUARE_SEARCH_METERS` | No       | The search radius from your location (default: `1600`) |
 
-```
-$ heroku set:config FOURSQUARE_CLIENT_ID=yourclientid
-$ heroku set:config FOURSQUARE_CLIENT_SECRET=yourclientsecret
-$ heroku set:config FOURSQUARE_ACCESS_TOKEN=youraccesstoken
-$ heroku set:config HUBOT_DEFAULT_LATITUDE=yourcoordinates
-$ heroku set:config HUBOT_DEFAULT_LONGITUDE=yourcoordinates
-```
-
-If you are using some other hosting/launcher, make sure the variables above are loaded in appropriately.
-
-## Adding Module to Your Hubot
+## Installing
 
 See full instructions [here](https://github.com/github/hubot/blob/master/docs/scripting.md#npm-packages).
 
@@ -31,7 +28,7 @@ See full instructions [here](https://github.com/github/hubot/blob/master/docs/sc
 
 ## Usage
 
-### Get All Recent Checkins
-
-* `hubot lunch`
-* Returns a random nearby lunch spot
+```
+alice> hubot lunch
+hubot> Bob's Burgers (103 Ocean Avenue) - www.fox.com/Shows/Bobs-Burgers‎
+```
