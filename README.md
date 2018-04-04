@@ -30,5 +30,5 @@ See full instructions [here](https://github.com/github/hubot/blob/master/docs/sc
 
 ```
 alice> hubot lunch
-hubot> Bob's Burgers (103 Ocean Avenue) - www.fox.com/Shows/Bobs-Burgers‎
+hubot> Bob's Burgers (103 Ocean Avenue) - http://www.fox.com/Shows/Bobs-Burgers
 ```
