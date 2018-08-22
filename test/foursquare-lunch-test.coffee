@@ -13,7 +13,7 @@ originalDateNow = Date.now
 mockDateNow = () ->
   return Date.parse('Tue Mar 30 2018 14:10:00 GMT-0500 (CDT)')
 
-describe 'hubot-untappd-friends', ->
+describe 'hubot-foursquare-lunch', ->
   beforeEach ->
     process.env.HUBOT_LOG_LEVEL='error'
     process.env.FOURSQUARE_CLIENT_ID='foobar1'
@@ -67,7 +67,7 @@ describe 'hubot-untappd-friends', ->
       return
     , 1000)
 
-describe 'hubot-untappd-friends missing configuration', ->
+describe 'hubot-foursquare-lunch missing configuration', ->
   beforeEach ->
     Date.now = mockDateNow
     nock.disableNetConnect()

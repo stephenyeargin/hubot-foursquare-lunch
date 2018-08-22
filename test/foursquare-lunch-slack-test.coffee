@@ -14,7 +14,7 @@ originalDateNow = Date.now
 mockDateNow = () ->
   return Date.parse('Tue Mar 30 2018 14:10:00 GMT-0500 (CDT)')
 
-describe 'hubot-untappd-friends for slack', ->
+describe 'hubot-foursquare-lunch for slack', ->
   beforeEach ->
     process.env.HUBOT_LOG_LEVEL='error'
     process.env.FOURSQUARE_CLIENT_ID='foobar1'
