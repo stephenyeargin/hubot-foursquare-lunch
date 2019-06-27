@@ -14,7 +14,7 @@
     "url": "https://github.com/stephenyeargin/hubot-foursquare-lunch/issues"
   },
   "dependencies": {
-    "node-foursquare": "0.3.3"
+    "node-foursquare": "0.4.6"
   },
   "peerDependencies": {
     "hubot": ">=2 <10 || 0.0.0-development"
