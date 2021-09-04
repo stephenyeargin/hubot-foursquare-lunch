@@ -1,6 +1,6 @@
 # Hubot Foursquare Lunch
 
-[![npm version](https://badge.fury.io/js/hubot-foursquare-lunch.svg)](http://badge.fury.io/js/hubot-foursquare-lunch) [![Build Status](https://travis-ci.org/stephenyeargin/hubot-foursquare-lunch.png)](https://travis-ci.org/stephenyeargin/hubot-foursquare-lunch)
+[![npm version](https://badge.fury.io/js/hubot-foursquare-lunch.svg)](http://badge.fury.io/js/hubot-foursquare-lunch) [![Build Status](https://app.travis-ci.com/stephenyeargin/hubot-foursquare-lunch.png)](https://app.travis-ci.com/stephenyeargin/hubot-foursquare-lunch)
 
 Use Foursquare API to pick a lunch spot.
 
