@@ -1,6 +1,6 @@
 /* global describe beforeEach afterEach, it, describe */
 /* eslint-disable func-names */
-const Helper = require('hubot-test-helper');
+const Helper = require('./helper');
 const chai = require('chai');
 const nock = require('nock');
 
