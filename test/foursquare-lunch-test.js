@@ -1,46 +1,32 @@
-/* global describe beforeEach afterEach, it, describe */
-/* eslint-disable func-names */
-const Helper = require('./helper');
-const chai = require('chai');
+/* eslint-disable no-await-in-loop */
+
+// Set credentials before the foursquare client module is loaded
+process.env.FOURSQUARE_CLIENT_ID = 'foobar1';
+process.env.FOURSQUARE_CLIENT_SECRET = 'foobar2';
+
+const { test, before, after } = require('node:test');
+const assert = require('node:assert/strict');
 const nock = require('nock');
-
-const {
-  expect,
-} = chai;
-
-const helper = new Helper([
-  '../src/foursquare-lunch.js',
-]);
+const { createTestBot } = require('./common/TestBot');
 
 // Alter time as test runs
 const originalDateNow = Date.now;
 const mockDateNow = () => Date.parse('Tue Mar 30 2018 14:10:00 GMT-0500 (CDT)');
 
-describe('hubot-foursquare-lunch', () => {
-  beforeEach(function () {
-    process.env.HUBOT_LOG_LEVEL = 'error';
-    process.env.FOURSQUARE_CLIENT_ID = 'foobar1';
-    process.env.FOURSQUARE_CLIENT_SECRET = 'foobar2';
-    process.env.HUBOT_DEFAULT_LATITUDE = 36.1514179;
-    process.env.HUBOT_DEFAULT_LONGITUDE = -86.8262359;
+test('hubot-foursquare-lunch', async (t) => {
+  let bot;
+
+  before(async () => {
     Date.now = mockDateNow;
-    nock.disableNetConnect();
-    this.room = helper.createRoom();
+    bot = await createTestBot();
   });
 
-  afterEach(function () {
-    delete process.env.HUBOT_LOG_LEVEL;
-    delete process.env.FOURSQUARE_CLIENT_ID;
-    delete process.env.FOURSQUARE_CLIENT_SECRET;
-    delete process.env.HUBOT_DEFAULT_LATITUDE;
-    delete process.env.HUBOT_DEFAULT_LONGITUDE;
+  after(async () => {
     Date.now = originalDateNow;
-    nock.cleanAll();
-    this.room.destroy();
+    bot.shutdown();
   });
 
-  // hubot lunch
-  it('responds with a lunch location', function (done) {
+  await t.test('responds with a lunch location', async () => {
     nock('https://api.foursquare.com')
       .get('/v2/venues/explore')
       .query({
@@ -55,61 +41,35 @@ describe('hubot-foursquare-lunch', () => {
       })
       .replyWithFile(200, `${__dirname}/fixtures/venues-explore-single.json`);
 
-    const selfRoom = this.room;
-    selfRoom.user.say('alice', '@hubot lunch');
-    setTimeout(
-      () => {
-        try {
-          expect(selfRoom.messages).to.eql([
-            ['alice', '@hubot lunch'],
-            [
-              'hubot',
-              'AVO Nashville (3001 Charlotte Ave Ste 200) - http://www.eatavo.com',
-            ],
-          ]);
-          done();
-        } catch (err) {
-          done(err);
-        }
-      },
-      100,
-    );
+    const response = await bot.sendAndWaitForResponse('hubot lunch');
+    assert.equal(response, 'AVO Nashville (3001 Charlotte Ave Ste 200) - http://www.eatavo.com');
   });
 });
 
-describe('hubot-foursquare-lunch missing configuration', () => {
-  beforeEach(function () {
+test('hubot-foursquare-lunch missing configuration', async (t) => {
+  let bot;
+
+  before(async () => {
     Date.now = mockDateNow;
-    nock.disableNetConnect();
-    this.room = helper.createRoom();
+    // Create bot without the required env vars
+    bot = await createTestBot();
+    // Remove required config to test error messages
+    delete process.env.HUBOT_DEFAULT_LATITUDE;
+    delete process.env.HUBOT_DEFAULT_LONGITUDE;
+    delete process.env.FOURSQUARE_CLIENT_ID;
+    delete process.env.FOURSQUARE_CLIENT_SECRET;
   });
 
-  afterEach(function () {
+  after(async () => {
     Date.now = originalDateNow;
-    nock.cleanAll();
-    this.room.destroy();
+    bot.shutdown();
   });
 
-  // hubot lunch
-  it('responds with error messages', function (done) {
-    const selfRoom = this.room;
-    selfRoom.user.say('alice', '@hubot lunch');
-    setTimeout(
-      () => {
-        try {
-          expect(selfRoom.messages).to.eql([
-            ['alice', '@hubot lunch'],
-            ['hubot', 'Ensure that HUBOT_DEFAULT_LATITUDE is set.'],
-            ['hubot', 'Ensure that HUBOT_DEFAULT_LONGITUDE is set.'],
-            ['hubot', 'Ensure that FOURSQUARE_CLIENT_ID is set.'],
-            ['hubot', 'Ensure that FOURSQUARE_CLIENT_SECRET is set.'],
-          ]);
-          done();
-        } catch (err) {
-          done(err);
-        }
-      },
-      100,
-    );
+  await t.test('responds with error messages', async () => {
+    await bot.send('hubot lunch');
+    assert.equal(bot.sends[0], 'Ensure that HUBOT_DEFAULT_LATITUDE is set.');
+    assert.equal(bot.sends[1], 'Ensure that HUBOT_DEFAULT_LONGITUDE is set.');
+    assert.equal(bot.sends[2], 'Ensure that FOURSQUARE_CLIENT_ID is set.');
+    assert.equal(bot.sends[3], 'Ensure that FOURSQUARE_CLIENT_SECRET is set.');
   });
 });
