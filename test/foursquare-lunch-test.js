@@ -6,7 +6,7 @@ process.env.FOURSQUARE_CLIENT_SECRET = 'foobar2';
 
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const nock = require('nock');
+const nock = require('nock').default;
 const { createTestBot } = require('./common/TestBot');
 
 // Alter time as test runs
